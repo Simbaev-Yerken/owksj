@@ -20,7 +20,6 @@
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'ru',
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
       }, 'google_translate_element');
     }
@@ -59,19 +58,32 @@
     .tab-active { border-bottom: 4px solid #FF6B35; }
     html, body { height: 100%; overflow: auto; }
     
-    /* Стили для скрытия дефолтной плашки гугла, оставляем только аккуратное меню */
+    /* Стили для аккуратного меню перевода */
     .goog-te-banner-frame.skiptranslate { display: none !important; }
     body { top: 0px !important; box-sizing: border-box; }
+    
+    /* Кастомизация выпадающего списка выбора языков */
     .goog-te-gadget-simple {
       background-color: rgba(255, 255, 255, 0.2) !important;
       border: none !important;
-      padding: 4px 8px !important;
+      padding: 6px 12px !important;
       border-radius: 9999px !important;
       color: white !important;
       font-weight: bold !important;
+      display: inline-flex !important;
+      align-items: center !important;
     }
     .goog-te-gadget-simple img { display: none !important; }
+    .goog-te-menu-value { margin: 0 !important; padding: 0 !important; }
     .goog-te-menu-value span { color: white !important; font-size: 14px !important; }
+    
+    /* Исправление отображения самого выпадающего фрейма списка языков (делаем его прокручиваемым) */
+    .goog-te-menu-frame {
+      max-height: 350px !important;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
+      border-radius: 12px !important;
+      overflow-y: auto !important;
+    }
   </style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
@@ -81,7 +93,7 @@
    <header class="foxy-gradient text-white py-4 px-6 sticky top-0 z-50 shadow-lg">
     <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
      <div class="flex items-center gap-3">
-      <img src="IMG_9271.png" alt="Foxy English" id="site-title" class="h-20 md:h-20 object-contain float">
+      <img src="IMG_9271.png" alt="Foxy English" id="site-title" class="h-30 md:h-30 object-contain float">
      </div>
      <div class="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
       <button onclick="setLanguage('ru')" class="lang-btn px-3 py-1 rounded-full text-sm font-bold transition hover:bg-white/30" data-lang="ru">🇷🇺 RU</button> 
@@ -107,7 +119,7 @@
     <section id="section-home" class="section">
      <div class="text-center mb-12">
       <div class="mb-6 flex justify-center">
-        <img src="IMG_9272.png" alt="Foxy" class="h-50 w50 object-contain float">
+        <img src="IMG_9272.png" alt="Foxy" class="h-46 w46 object-contain float">
       </div>
       <h2 class="text-4xl md:text-5xl font-black text-orange-600 mb-4" data-text="welcome">Привет! Я Фокси!</h2>
       <p class="text-xl text-gray-600 max-w-2xl mx-auto" data-text="welcome_desc">Давай вместе учить английский язык! Выбирай игру и начинай!</p>
@@ -224,7 +236,7 @@
     </section>
 
     <section id="section-dictionary" class="section hidden">
-     <h2 class="text-3xl font-black text-orange-600 mb-6 text-center" data-text="dictionary_title">📚 Словарь - 100 слов</h2><div class="mb-6"><input type="text" id="dict-search" oninput="filterDictionary()" placeholder="Поиск..." class="w-full px-6 py-4 rounded-full border-2 border-orange-200 focus:border-orange-400 focus:outline-none text-lg">
+     <h2 class="text-3xl font-black text-orange-600 mb-6 text-center" data-text="dictionary_title">📚 Секция Словаря</h2><div class="mb-6"><input type="text" id="dict-search" oninput="filterDictionary()" placeholder="Поиск..." class="w-full px-6 py-4 rounded-full border-2 border-orange-200 focus:border-orange-400 focus:outline-none text-lg">
      </div><div class="flex flex-wrap gap-2 mb-6"><button onclick="filterCategory('all')" class="cat-btn bg-orange-500 text-white px-4 py-2 rounded-full font-bold transition" data-cat="all" data-text="cat_all">Все</button> <button onclick="filterCategory('animals')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="animals" data-text="cat_animals">Животные</button> <button onclick="filterCategory('food')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="food" data-text="cat_food">Еда</button> <button onclick="filterCategory('colors')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="colors" data-text="cat_colors">Цвета</button> <button onclick="filterCategory('family')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="family" data-text="cat_family">Семья</button> <button onclick="filterCategory('body')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="body" data-text="cat_body">Тело</button> <button onclick="filterCategory('nature')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="nature" data-text="cat_nature">Природа</button> <button onclick="filterCategory('numbers')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="numbers" data-text="cat_numbers">Числа</button> <button onclick="filterCategory('actions')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="actions" data-text="cat_actions">Действия</button>
      </div><div id="dictionary-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     </section>
@@ -289,7 +301,7 @@
   </div>
 
   <script>
-    // Блок данных словаря (100 слов) оставлен без изменений
+    // Блок данных словаря (100 слов)
     const dictionary = [
       { en: 'cat', ru: 'кошка', kz: 'мысық', emoji: '🐱', category: 'animals' },
       { en: 'dog', ru: 'собака', kz: 'ит', emoji: '🐕', category: 'animals' },
@@ -353,7 +365,7 @@
       { en: 'hair', ru: 'волосы', kz: 'шаш', emoji: '💇', category: 'body' },
       { en: 'sun', ru: 'солнце', kz: 'күн', emoji: '☀️', category: 'nature' },
       { en: 'moon', ru: 'луна', kz: 'ай', emoji: '🌙', category: 'nature' },
-      { en: 'star', ru: 'звезда', kz: 'жұлдыз', emoji: '⭐', category: 'nature' },
+      { en: 'star', ru: 'везда', kz: 'жұлдыз', emoji: '⭐', category: 'nature' },
       { en: 'tree', ru: 'дерево', kz: 'ағаш', emoji: '🌳', category: 'nature' },
       { en: 'flower', ru: 'цветок', kz: 'гүл', emoji: '🌸', category: 'nature' },
       { en: 'rain', ru: 'дождь', kz: 'жаңбыр', emoji: '🌧️', category: 'nature' },
@@ -398,7 +410,7 @@
       ru: {
         home: 'Главная', games: 'Игры', dictionary: 'Словарь', translator: 'Переводчик',
         welcome: 'Привет! Я Фокси!', welcome_desc: 'Давай вместе учить английский язык! Выбирай игру и начинай!',
-        play_games: 'Играть', play_games_desc: '5 весёлых игр',
+        play_games: 'Играть', play_games_desc: '5 веселых игр',
         learn_words: 'Учить слова', learn_words_desc: '100 важных слов',
         translate: 'Переводить', translate_desc: 'Быстрый перевод',
         your_progress: 'Твой прогресс', words_learned: 'слов изучено', games_played: 'игр сыграно', total_points: 'всего очков',
@@ -475,7 +487,7 @@
       }
     };
 
-    // Состояние игры и конфигурация
+    // Состояние игры
     let currentLang = 'ru';
     let currentSection = 'home';
     let currentCategory = 'all';
@@ -492,13 +504,11 @@
     };
     let config = { ...defaultConfig };
 
-    // Функция переключения видимости Google Переводчика
     function toggleGoogleTranslate() {
       const wrapper = document.getElementById('google-translate-wrapper');
       wrapper.classList.toggle('hidden');
     }
 
-    // Инициализация SDK
     async function initSDK() {
       if (window.elementSdk) {
         await window.elementSdk.init({
@@ -527,7 +537,6 @@
     }
 
     function applyConfig() {
-      // Изменение текста заголовка убрано, так как используется картинка-логотип
       document.querySelectorAll('header').forEach(el => {
         el.style.background = `linear-gradient(135deg, ${config.primary_color} 0%, ${config.secondary_color} 100%)`;
       });
@@ -540,7 +549,6 @@
       });
     }
 
-    // Смена языка локальной системы локализации
     function setLanguage(lang) {
       currentLang = lang;
       document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -559,7 +567,6 @@
       renderQuickWords();
     }
 
-    // Навигация
     function showSection(section) {
       currentSection = section;
       document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
@@ -579,7 +586,6 @@
       if (section === 'games') exitGame();
     }
 
-    // Отрисовка словаря
     function renderDictionary() {
       const grid = document.getElementById('dictionary-grid');
       const search = document.getElementById('dict-search').value.toLowerCase();
@@ -622,7 +628,6 @@
       renderDictionary();
     }
 
-    // Переводчик
     function translateWord() {
       const input = document.getElementById('translate-input').value.toLowerCase().trim();
       const resultDiv = document.getElementById('translation-result');
@@ -674,7 +679,6 @@
       }
     }
 
-    // Игры (логика игр сохранена полностью)
     function startGame(type) {
       gameState = {
         type, score: 0, round: 0, maxRounds: 10, questions: [],
@@ -841,7 +845,6 @@
       `;
     }
 
-    // Игра на память (Memory Game)
     function initMemoryGame() {
       const words = [...dictionary].sort(() => Math.random() - 0.5).slice(0, 8);
       const cards = [];
@@ -901,7 +904,6 @@
       renderMemoryBoard();
     }
 
-    // Проверка ответов и статистика
     function checkAnswer(answer, correct) {
       const isCorrect = answer.toLowerCase() === correct.toLowerCase();
       if (isCorrect) { gameState.score += 10; showFeedback(true); stats.words++; } else { showFeedback(false); }
@@ -939,7 +941,6 @@
       document.getElementById('stat-score').textContent = stats.score;
     }
 
-    // Инициализация
     initSDK();
     setLanguage('ru');
     renderDictionary();
