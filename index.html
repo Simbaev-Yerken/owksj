@@ -20,6 +20,7 @@
     function googleTranslateElementInit() {
       new google.translate.TranslateElement({
         pageLanguage: 'ru',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
         autoDisplay: false
       }, 'google_translate_element');
     }
@@ -58,26 +59,34 @@
     .tab-active { border-bottom: 4px solid #FF6B35; }
     html, body { height: 100%; overflow: auto; }
     
-    /* Стили для аккуратного меню перевода */
+    /* Стили для интеграции кнопки перевода */
     .goog-te-banner-frame.skiptranslate { display: none !important; }
     body { top: 0px !important; box-sizing: border-box; }
     
-    /* Кастомизация выпадающего списка выбора языков */
+    /* Стилизация контейнера под кнопку (...) */
     .goog-te-gadget-simple {
       background-color: rgba(255, 255, 255, 0.2) !important;
       border: none !important;
-      padding: 6px 12px !important;
+      padding: 4px 10px !important;
       border-radius: 9999px !important;
       color: white !important;
       font-weight: bold !important;
       display: inline-flex !important;
       align-items: center !important;
+      cursor: pointer !important;
+      transition: background-color 0.2s;
+    }
+    .goog-te-gadget-simple:hover {
+      background-color: rgba(255, 255, 255, 0.3) !important;
     }
     .goog-te-gadget-simple img { display: none !important; }
-    .goog-te-menu-value { margin: 0 !important; padding: 0 !important; }
-    .goog-te-menu-value span { color: white !important; font-size: 14px !important; }
+    .goog-te-menu-value { margin: 0 !important; padding: 0 !important; display: flex !important; align-items: center; }
     
-    /* Исправление отображения самого выпадающего фрейма списка языков (делаем его прокручиваемым) */
+    /* Подменяем стандартный текст Google на аккуратное троеточие */
+    .goog-te-menu-value span:first-child { display: none !important; }
+    .goog-te-menu-value:before { content: "…" !important; color: white !important; font-size: 16px !important; font-weight: bold !important; }
+    .goog-te-menu-value img { display: none !important; }
+    
     .goog-te-menu-frame {
       max-height: 350px !important;
       box-shadow: 0 10px 25px rgba(0,0,0,0.2) !important;
@@ -90,10 +99,11 @@
  <body class="h-full bg-gradient-to-br from-orange-50 via-white to-orange-100">
   <div id="app" class="min-h-full w-full">
    
-   <header class="foxy-gradient text-white py-4 px-6 sticky top-0 z-50 shadow-lg">
-    <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
+   <header class="foxy-gradient text-white py-3 px-6 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-2">
      <div class="flex items-center gap-3">
-      <img src="IMG_9271.png" alt="Foxy English" id="site-title" class="h-30 md:h-30 object-contain float">
+      <!-- Логотип уменьшен до средних размеров (h-16 на мобильных, h-20 на десктопе) -->
+      <img src="IMG_9271.png" alt="Foxy English" id="site-title" class="h-16 md:h-20 object-contain float">
      </div>
      <div class="flex items-center gap-2 bg-white/20 rounded-full px-4 py-2">
       <button onclick="setLanguage('ru')" class="lang-btn px-3 py-1 rounded-full text-sm font-bold transition hover:bg-white/30" data-lang="ru">🇷🇺 RU</button> 
@@ -101,12 +111,9 @@
       <button onclick="setLanguage('en')" class="lang-btn px-3 py-1 rounded-full text-sm font-bold transition hover:bg-white/30" data-lang="en">🇬🇧 EN</button>
       
       <span class="text-white/40">|</span>
-      <button onclick="toggleGoogleTranslate()" class="px-3 py-1 rounded-full text-sm font-bold transition hover:bg-white/30 bg-white/10" title="More languages">…</button>
+      <!-- Теперь это нативный контейнер Google Translate, стилизованный под (...) -->
+      <div id="google_translate_element"></div>
      </div>
-    </div>
-    
-    <div id="google-translate-wrapper" class="hidden max-w-6xl mx-auto mt-2 flex justify-end">
-      <div id="google_translate_element" class="bg-white/10 rounded-xl p-1"></div>
     </div>
    </header>
 
@@ -236,7 +243,7 @@
     </section>
 
     <section id="section-dictionary" class="section hidden">
-     <h2 class="text-3xl font-black text-orange-600 mb-6 text-center" data-text="dictionary_title">📚 Секция Словаря</h2><div class="mb-6"><input type="text" id="dict-search" oninput="filterDictionary()" placeholder="Поиск..." class="w-full px-6 py-4 rounded-full border-2 border-orange-200 focus:border-orange-400 focus:outline-none text-lg">
+     <h2 class="text-3xl font-black text-orange-600 mb-6 text-center" data-text="dictionary_title">📚 Секция Семья</h2><div class="mb-6"><input type="text" id="dict-search" oninput="filterDictionary()" placeholder="Поиск..." class="w-full px-6 py-4 rounded-full border-2 border-orange-200 focus:border-orange-400 focus:outline-none text-lg">
      </div><div class="flex flex-wrap gap-2 mb-6"><button onclick="filterCategory('all')" class="cat-btn bg-orange-500 text-white px-4 py-2 rounded-full font-bold transition" data-cat="all" data-text="cat_all">Все</button> <button onclick="filterCategory('animals')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="animals" data-text="cat_animals">Животные</button> <button onclick="filterCategory('food')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="food" data-text="cat_food">Еда</button> <button onclick="filterCategory('colors')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="colors" data-text="cat_colors">Цвета</button> <button onclick="filterCategory('family')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="family" data-text="cat_family">Семья</button> <button onclick="filterCategory('body')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="body" data-text="cat_body">Тело</button> <button onclick="filterCategory('nature')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="nature" data-text="cat_nature">Природа</button> <button onclick="filterCategory('numbers')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="numbers" data-text="cat_numbers">Числа</button> <button onclick="filterCategory('actions')" class="cat-btn bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-bold hover:bg-orange-200 transition" data-cat="actions" data-text="cat_actions">Действия</button>
      </div><div id="dictionary-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
     </section>
@@ -301,7 +308,6 @@
   </div>
 
   <script>
-    // Блок данных словаря (100 слов)
     const dictionary = [
       { en: 'cat', ru: 'кошка', kz: 'мысық', emoji: '🐱', category: 'animals' },
       { en: 'dog', ru: 'собака', kz: 'ит', emoji: '🐕', category: 'animals' },
@@ -365,7 +371,7 @@
       { en: 'hair', ru: 'волосы', kz: 'шаш', emoji: '💇', category: 'body' },
       { en: 'sun', ru: 'солнце', kz: 'күн', emoji: '☀️', category: 'nature' },
       { en: 'moon', ru: 'луна', kz: 'ай', emoji: '🌙', category: 'nature' },
-      { en: 'star', ru: 'везда', kz: 'жұлдыз', emoji: '⭐', category: 'nature' },
+      { en: 'star', ru: 'звезда', kz: 'жұлдыз', emoji: '⭐', category: 'nature' },
       { en: 'tree', ru: 'дерево', kz: 'ағаш', emoji: '🌳', category: 'nature' },
       { en: 'flower', ru: 'цветок', kz: 'гүл', emoji: '🌸', category: 'nature' },
       { en: 'rain', ru: 'дождь', kz: 'жаңбыр', emoji: '🌧️', category: 'nature' },
@@ -405,7 +411,6 @@
       { en: 'learn', ru: 'учиться', kz: 'үйрену', emoji: '📚', category: 'actions' }
     ];
 
-    // Блок локализации переводов
     const translations = {
       ru: {
         home: 'Главная', games: 'Игры', dictionary: 'Словарь', translator: 'Переводчик',
@@ -487,7 +492,6 @@
       }
     };
 
-    // Состояние игры
     let currentLang = 'ru';
     let currentSection = 'home';
     let currentCategory = 'all';
@@ -503,11 +507,6 @@
       background_color: '#FFF7ED', text_color: '#1F2937', accent_color: '#FFFFFF'
     };
     let config = { ...defaultConfig };
-
-    function toggleGoogleTranslate() {
-      const wrapper = document.getElementById('google-translate-wrapper');
-      wrapper.classList.toggle('hidden');
-    }
 
     async function initSDK() {
       if (window.elementSdk) {
